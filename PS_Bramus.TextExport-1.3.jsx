@@ -47,12 +47,9 @@ function initTextExport() {
     docs = [app.activeDocument];
   }
 
-  /**
-   * @todo convert to ems if this is true
-   */
   base = confirm('To use em\'s, enter base font size');
   if (base == null) {
-  	base = false;
+    base = false;
   }
 
   // Loop all documents
@@ -110,18 +107,17 @@ function initTextExport() {
 
     // Give notice that we're done or open the file (only when running 1 file!)
     if (runMultiple === false) {
-      if (openFile === true)
-        fileOut.execute();
-      else
+      if (openFile === true) {
+              fileOut.execute();
+      } else {
         alert("File was saved to:\n" + Folder.decode(filePath), "TextExport");
+      }
     }
-
   }
 
   if (runMultiple === true) {
     alert("Parsed " + documents.length + " files;\nFiles were saved in your documents folder", "TextExport");
   }
-
 }
 
 
@@ -160,14 +156,16 @@ function goTextExport2(el, fileOut, path) {
       	fileOut.writeln(formatSelector(layerIndex, 'color', '#' + textItem.color.rgb.hexValue);
       	fileOut.writeln(formatSelector(layerIndex, 'letter-spacing', formatUnit(getLetterSpacing(textItem.tracking)));
 
-        /*
-        fileOut.writeln(currentLayer.size);
-        fileOut.writeln('LayerPath: ' + path);
-        fileOut.writeln('LayerName: ' + currentLayer.name);
-        fileOut.writeln('');
-        fileOut.writeln('LayerContent:');
-        fileOut.writeln(currentLayer.textItem.contents);
-        */
+        /**
+         * @todo add more layer metadata
+         *
+         * fileOut.writeln(currentLayer.size);
+         * fileOut.writeln('LayerPath: ' + path);
+         * fileOut.writeln('LayerName: ' + currentLayer.name);
+         * fileOut.writeln('');
+         * fileOut.writeln('LayerContent:');
+         * fileOut.writeln(currentLayer.textItem.contents);
+         */
 
       }
     }
