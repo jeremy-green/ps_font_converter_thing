@@ -47,7 +47,7 @@ function initTextExport() {
     docs = [app.activeDocument];
   }
 
-  base = confirm('To use em\'s, enter base font size');
+  base = prompt('To use em\'s, enter base font size');
   if (base == null) {
     base = false;
   }
@@ -59,16 +59,16 @@ function initTextExport() {
     if ( (runMultiple !== true) && (useDialog === true) ) {
 
       // Pop up save dialog
-      var saveFile = File.saveDialog("Please select a file to export the text to:");
+      /*var saveFile = File.saveDialog("Please select a file to export the text to:");
 
       // User Cancelled
       if(saveFile == null) {
         alert("User Cancelled");
         return;
-      }
+      }*/
 
       // set filePath and fileName to the one chosen in the dialog
-      filePath = saveFile.path + "/" + saveFile.name;
+      filePath = Folder.myDocuments + '/' + docs[i].name + '.scss';
 
 
     } else {
@@ -152,9 +152,9 @@ function goTextExport2(el, fileOut, path) {
         /**
          * @todo turn the properties into an object and iterate over it
          */
-        fileOut.writeln(formatSelector(layerIndex, 'font-size', formatUnit(handleRound(textItem.size)));
-      	fileOut.writeln(formatSelector(layerIndex, 'color', '#' + textItem.color.rgb.hexValue);
-      	fileOut.writeln(formatSelector(layerIndex, 'letter-spacing', formatUnit(getLetterSpacing(textItem.tracking)));
+        fileOut.writeln(formatSelector(layerIndex, 'font-size', formatUnit(handleRound(textItem.size))));
+        fileOut.writeln(formatSelector(layerIndex, 'color', '#' + textItem.color.rgb.hexValue));
+        fileOut.writeln(formatSelector(layerIndex, 'letter-spacing', formatUnit(getLetterSpacing(textItem.tracking))));
 
         /**
          * @todo add more layer metadata
@@ -172,7 +172,7 @@ function goTextExport2(el, fileOut, path) {
   }
 }
 
-function convertEm(px, base) {
+function convertEm(px) {
   return px / base;
 }
 
@@ -186,8 +186,8 @@ function formatUnit(value) {
 
 function formatSelector(index, property, value) {
   return [
-    '%layer' + index + '{ ',
-    '  ' + property + ': ' + value,
+    '%layer' + index + ' {',
+    '  ' + property + ': ' + value + ';',
     '}'
   ].join('\n');
 }
@@ -195,17 +195,20 @@ function formatSelector(index, property, value) {
 function formatSeparator(txt) {
   return [
     "//-----------------------------------------------------------------------",
-    "//  " + txt;
+    "//  " + txt,
     "//-----------------------------------------------------------------------"
   ].join('\n');
 }
 
 function getLetterSpacing(num) {
-  return handleRound(num) * 0.1;
+  return handleRound(num) * 0.01;
 }
 
 function handleRound(num) {
-  return Math.round(num * 10) / 100;
+  if (num == 0) {
+    return num;
+  }
+  return Math.round(num * 100) / 100;
 }
 
 
