@@ -1,4 +1,4 @@
-/*****************************************************************
+﻿/*****************************************************************
  *
  * TextExport 1.3 - by Bramus! - http://www.bram.us/
  * Licensed under the Creative Commons Attribution 2.5 License - http://creativecommons.org/licenses/by/2.5/
@@ -148,7 +148,8 @@ function goTextExport2(el, fileOut, path) {
          */
         fileOut.writeln(formatSelector(layerIndex, 'font-size', formatUnit(handleRound(textItem.size))));
         fileOut.writeln(formatSelector(layerIndex, 'color', '#' + textItem.color.rgb.hexValue));
-        //fileOut.writeln(formatSelector(layerIndex, 'letter-spacing', formatUnit(getLetterSpacing(textItem.tracking))));
+        fileOut.writeln(formatSelector(layerIndex, 'letter-spacing', formatUnit(getLetterSpacing(handleRound(textItem.tracking)))));
+        fileOut.writeln(formatSelector(layerIndex, 'font-family', textItem.font));
 
       }
     }
@@ -199,7 +200,7 @@ function formatSeparator(arr) {
 }
 
 function getLetterSpacing(num) {
-  return handleRound(num) * 0.01;
+  return num * 0.01;
 }
 
 function getLineHeight(px, lh) {
