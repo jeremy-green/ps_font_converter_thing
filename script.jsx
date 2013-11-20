@@ -82,7 +82,7 @@ function initTextExport() {
     fileOut.open("w", "TEXT", "????");
 
     // Append title of document to file
-    fileOut.writeln(formatSeparator(["START TextExport for " + docs[i].name]));
+    //fileOut.writeln(formatSeparator(["START TextExport for " + docs[i].name]));
 
     // Set active document
     app.activeDocument = docs[i];
@@ -91,7 +91,7 @@ function initTextExport() {
     goTextExport2(app.activeDocument, fileOut, '/');
 
     //  Hammertime!
-    fileOut.writeln(formatSeparator(["FINISHED TextExport for " + docs[i].name]));
+    //fileOut.writeln(formatSeparator(["FINISHED TextExport for " + docs[i].name]));
 
     // close the file
     fileOut.close();
@@ -146,26 +146,23 @@ function goTextExport2(el, fileOut, path) {
         /**
          * @todo turn the properties into an object and iterate over it
          */
+        var font = getFont(textItem.font);
         var textObj = {
-          'font-size': {
-            textItem.size,
-
-          },
-          'color': textItem.color.rgb.hexValue,
-          'letter-spacing': textItem.tracking,
-          'font-family': textItem.font
+          'color': '#' + textItem.color.rgb.hexValue,
+          'font-family': '"' + font.family + '"',
+          'font-size': formatUnit(handleRound(textItem.size)),
+          'font-weight': font.weight,
+          'font-variant': getTextCase(textItem.capitalization),
+          'letter-spacing': formatUnit(getLetterSpacing(textItem.tracking)),
+          'line-height': getLineHeight(handleRound(textItem.leading), handleRound(textItem.size)),
+          'text-decoration': getTextDecoration(textItem.underline),
+          'text-transform': getTextTransform(textItem.capitalization)
         };
         for (prop in textObj) {
-          if (prop === 'color') {
-            textObj[prop] = '#' + textObj[prop];
+          if (textObj[prop]) {
+            fileOut.writeln(formatSelector(layerIndex, prop, textObj[prop]));
           }
-          fileOut.writeln(formatSelector(layerIndex, prop, ))
         }
-        /*fileOut.writeln(formatSelector(layerIndex, 'font-size', formatUnit(handleRound(textItem.size))));
-        fileOut.writeln(formatSelector(layerIndex, 'color', '#' + textItem.color.rgb.hexValue));
-        fileOut.writeln(formatSelector(layerIndex, 'letter-spacing', formatUnit(getLetterSpacing(handleRound(textItem.tracking)))));
-        fileOut.writeln(formatSelector(layerIndex, 'font-family', textItem.font));*/
-
       }
     }
   }
@@ -214,12 +211,54 @@ function formatSeparator(arr) {
   ].join('\n');
 }
 
+function getFont(font) {
+  var f = app.fonts.getByName(font);
+  return {
+    'family': f.family,
+    'weight': f.style
+  };
+}
+
 function getLetterSpacing(num) {
   return num * 0.01;
 }
 
 function getLineHeight(px, lh) {
-  return lh/px;
+  return px/lh;
+}
+
+function getTextCase(tc) {
+  switch (tc) {
+    case TextCase.SMALLCAPS:
+      return 'small-caps';
+    break;
+    default :
+      return false;
+    break;
+  }
+}
+
+function getTextDecoration(td) {
+  switch (td) {
+    case UnderlineType.UNDERLINELEFT:
+    case UnderlineType.UNDERLINERIGHT:
+      return 'underline';
+    break;
+    default :
+      return false;
+    break;
+  }
+}
+
+function getTextTransform(tf) {
+  switch (tf) {
+    case TextCase.ALLCAPS:
+      return 'uppercase';
+    break;
+    default :
+      return false;
+    break;
+  }
 }
 
 function handleRound(num) {
