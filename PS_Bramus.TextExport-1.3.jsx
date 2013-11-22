@@ -1,15 +1,6 @@
 /*****************************************************************
  *
  * TextExport 1.3 - by Bramus! - http://www.bram.us/
- *
- * v 1.x - ????.??.?? - UPD: HTML Output (?)
- * v 1.3 - 2008.03.16 - UPD: Base rewrite, now gets all layers (sets & regular ones) in one variable.
- *                    - ADD: Layer Path & Layer Name in export
- *                    - ADD: Cycle Multiple Files
- * v 1.2 - 2008.03.11 - User friendly version  Added filesave dialog (*FIRST RELEASE*)
- * v 1.1 - 2008.03.11 - Extended version,   Loops sets too (I can haz recursiveness)
- * v 1.0 - 2008.03.11 - Basic version,     Loops all layers (no sets though)
- *
  * Licensed under the Creative Commons Attribution 2.5 License - http://creativecommons.org/licenses/by/2.5/
  *
  *****************************************************************/
@@ -91,7 +82,7 @@ function initTextExport() {
     fileOut.open("w", "TEXT", "????");
 
     // Append title of document to file
-    fileOut.writeln(formatSeparator("START TextExport for " + docs[i].name));
+    fileOut.writeln(formatSeparator(["START TextExport for " + docs[i].name]));
 
     // Set active document
     app.activeDocument = docs[i];
@@ -100,7 +91,7 @@ function initTextExport() {
     goTextExport2(app.activeDocument, fileOut, '/');
 
     //  Hammertime!
-    fileOut.writeln(formatSeparator("FINISHED TextExport for " + docs[i].name));
+    fileOut.writeln(formatSeparator(["FINISHED TextExport for " + docs[i].name]));
 
     // close the file
     fileOut.close();
@@ -147,25 +138,17 @@ function goTextExport2(el, fileOut, path) {
       // Layer is visible and Text --> we can haz copy paste!
       if ( (currentLayer.visible) && (currentLayer.kind == LayerKind.TEXT) ) {
         var textItem = currentLayer.textItem;
-        fileOut.writeln(formatSeparator(currentLayer.name));
+        fileOut.writeln(formatSeparator([
+          currentLayer.name,
+          currentLayer.textItem.contents
+        ]));
 
         /**
          * @todo turn the properties into an object and iterate over it
          */
         fileOut.writeln(formatSelector(layerIndex, 'font-size', formatUnit(handleRound(textItem.size))));
         fileOut.writeln(formatSelector(layerIndex, 'color', '#' + textItem.color.rgb.hexValue));
-        fileOut.writeln(formatSelector(layerIndex, 'letter-spacing', formatUnit(getLetterSpacing(textItem.tracking))));
-
-        /**
-         * @todo add more layer metadata
-         *
-         * fileOut.writeln(currentLayer.size);
-         * fileOut.writeln('LayerPath: ' + path);
-         * fileOut.writeln('LayerName: ' + currentLayer.name);
-         * fileOut.writeln('');
-         * fileOut.writeln('LayerContent:');
-         * fileOut.writeln(currentLayer.textItem.contents);
-         */
+        //fileOut.writeln(formatSelector(layerIndex, 'letter-spacing', formatUnit(getLetterSpacing(textItem.tracking))));
 
       }
     }
@@ -174,6 +157,10 @@ function goTextExport2(el, fileOut, path) {
 
 function convertEm(px) {
   return px / base;
+}
+
+function formatComment(txt) {
+  return '//  ' + txt;
 }
 
 function formatUnit(value) {
@@ -192,16 +179,31 @@ function formatSelector(index, property, value) {
   ].join('\n');
 }
 
-function formatSeparator(txt) {
+function formatSeparator(arr) {
+
+  /**
+   * Photoshop doesnt support map
+    txt = arr.map(function(item) {
+      return formatComment(item);
+    }).join('\n');
+  */
+
+  for (var i = arr.length - 1; i >= 0; i--) {
+    arr[i] = formatComment(arr[i]);
+  };
   return [
     "//-----------------------------------------------------------------------",
-    "//  " + txt,
+    arr.join('\n'),
     "//-----------------------------------------------------------------------"
   ].join('\n');
 }
 
 function getLetterSpacing(num) {
   return handleRound(num) * 0.01;
+}
+
+function getLineHeight(px, lh) {
+  return lh/px;
 }
 
 function handleRound(num) {
