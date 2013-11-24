@@ -201,9 +201,11 @@ function goTextExport2(el, fileOut, path) {
     }
   }
   fileOut.writeln(formatSeparator(['Variables']));
-  fileOut.writeln(varsArr.join('\n'));
+  fileOut.writeln(varsArr.sort().join('\n'));
   fileOut.writeln('\n');
   fileOut.writeln(definitionsArr.join('\n'));
+
+  return 'You are the best!'
 }
 
 function convertEm(px) {
@@ -297,7 +299,7 @@ function getLineHeight(px, lh) {
 }
 
 function getMachineName(str) {
-  return str.replace(/[^\w]+/, '-').toLowerCase();
+  return str.replace(/[^\w]+/g, '-').toLowerCase();
 }
 
 function getTextAlign(justification) {
