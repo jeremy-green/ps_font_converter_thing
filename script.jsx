@@ -146,10 +146,25 @@ function goTextExport2(el, fileOut, path) {
         /**
          * @todo turn the properties into an object and iterate over it
          */
-        fileOut.writeln(formatSelector(layerIndex, 'font-size', formatUnit(handleRound(textItem.size))));
+        var textObj = {
+          'font-size': {
+            textItem.size,
+
+          },
+          'color': textItem.color.rgb.hexValue,
+          'letter-spacing': textItem.tracking,
+          'font-family': textItem.font
+        };
+        for (prop in textObj) {
+          if (prop === 'color') {
+            textObj[prop] = '#' + textObj[prop];
+          }
+          fileOut.writeln(formatSelector(layerIndex, prop, ))
+        }
+        /*fileOut.writeln(formatSelector(layerIndex, 'font-size', formatUnit(handleRound(textItem.size))));
         fileOut.writeln(formatSelector(layerIndex, 'color', '#' + textItem.color.rgb.hexValue));
         fileOut.writeln(formatSelector(layerIndex, 'letter-spacing', formatUnit(getLetterSpacing(handleRound(textItem.tracking)))));
-        fileOut.writeln(formatSelector(layerIndex, 'font-family', textItem.font));
+        fileOut.writeln(formatSelector(layerIndex, 'font-family', textItem.font));*/
 
       }
     }
