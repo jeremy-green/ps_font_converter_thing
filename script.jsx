@@ -38,7 +38,7 @@ function initTextExport() {
     docs = [app.activeDocument];
   }
 
-  base = prompt('To use em\'s, enter base font size');
+  base = prompt('To use em\'s, enter base font size.\nPress cancel to use pixels', 16);
   if (base == null) {
     base = false;
   }
@@ -148,19 +148,20 @@ function goTextExport2(el, fileOut, path) {
          */
         var font = getFont(textItem.font);
         var textObj = {
-          'color': '#' + textItem.color.rgb.hexValue,
-          'font-family': '"' + font.family + '"',
-          'font-size': formatUnit(handleRound(textItem.size)),
-          'font-weight': font.weight,
-          'font-variant': getTextCase(textItem.capitalization),
-          'letter-spacing': formatUnit(getLetterSpacing(textItem.tracking)),
-          'line-height': getLineHeight(handleRound(textItem.leading), handleRound(textItem.size)),
-          'text-decoration': getTextDecoration(textItem.underline),
-          'text-transform': getTextTransform(textItem.capitalization)
+          'color': function () { try { return '#' + textItem.color.rgb.hexValue } catch (e) { return false; } },
+          'font-family': function () { try { return '"' + font.family + '"' } catch (e) { return false; } },
+          'font-size': function () { try { return formatUnit(handleRound(textItem.size)) } catch (e) { return false; } },
+          'font-weight': function () { try { return font.weight } catch (e) { return false; } },
+          'font-variant': function () { try { return getTextCase(textItem.capitalization) } catch (e) { return false; } },
+          'letter-spacing': function () { try { return formatUnit(getLetterSpacing(textItem.tracking)) } catch (e) { return false; } },
+          'line-height': function () { try { return getLineHeight(handleRound(textItem.leading), handleRound(textItem.size)) } catch (e) { return false; } },
+          'text-decoration': function () { try { return getTextDecoration(textItem.underline) } catch (e) { return false; } },
+          'text-transform': function () { try { return getTextTransform(textItem.capitalization) } catch (e) { return false; } }
         };
         for (prop in textObj) {
-          if (textObj[prop]) {
-            fileOut.writeln(formatSelector(layerIndex, prop, textObj[prop]));
+          var val = textObj[prop].call();
+          if (val) {
+            fileOut.writeln(formatSelector(layerIndex, prop, val));
           }
         }
       }
@@ -200,8 +201,8 @@ function formatSeparator(arr) {
       return formatComment(item);
     }).join('\n');
   */
-
-  for (var i = arr.length - 1; i >= 0; i--) {
+  var i = arr.length - 1;
+  for (; i >= 0; i--) {
     arr[i] = formatComment(arr[i]);
   };
   return [
@@ -213,9 +214,12 @@ function formatSeparator(arr) {
 
 function getFont(font) {
   var f = app.fonts.getByName(font);
+  for (prop in f) {
+    $.writeln(prop + ': ' + f[prop]);
+  }
   return {
     'family': f.family,
-    'weight': f.style
+    'weight': handleWeight(f.style.toLowerCase())
   };
 }
 
@@ -224,7 +228,7 @@ function getLetterSpacing(num) {
 }
 
 function getLineHeight(px, lh) {
-  return px/lh;
+  return handleRound(px/lh);
 }
 
 function getTextCase(tc) {
@@ -266,6 +270,18 @@ function handleRound(num) {
     return num;
   }
   return Math.round(num * 100) / 100;
+}
+
+function handleWeight(style) {
+  var collection = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'ultrabold'],
+  len = collection.length,
+  i = 1;
+  for (; i<=len; i++) {
+    if (style == collection[i]) {
+      return i * 100;
+    }
+  }
+  return false;
 }
 
 
