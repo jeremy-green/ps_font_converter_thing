@@ -155,13 +155,16 @@ function goTextExport2(el, fileOut, path) {
           'font-variant': function () { try { return getTextCase(textItem.capitalization) } catch (e) { return false; } },
           'letter-spacing': function () { try { return formatUnit(getLetterSpacing(textItem.tracking)) } catch (e) { return false; } },
           'line-height': function () { try { return getLineHeight(handleRound(textItem.leading), handleRound(textItem.size)) } catch (e) { return false; } },
-          'text-decoration': function () { try { return getTextDecoration(textItem.underline) } catch (e) { return false; } },
-          'text-transform': function () { try { return getTextTransform(textItem.capitalization) } catch (e) { return false; } }
+          'text-decoration': function () { try { return getTextDecoration({'underline': textItem.underline, 'line-through': textItem.strikeThru}) } catch (e) { return false; } },
+          'text-transform': function () { try { return getTextTransform(textItem.capitalization) } catch (e) { return false; } },
+          'font-style': function () { try { return getFontStyle(textItem.fauxItalic); } catch (e) { return false; } }
         };
         for (prop in textObj) {
           var val = textObj[prop].call();
           if (val) {
             fileOut.writeln(formatSelector(layerIndex, prop, val));
+          } else {
+            //fileOut.writeln(formatComment(prop + ' is not defined in the PSD.'));
           }
         }
       }
@@ -206,9 +209,9 @@ function formatSeparator(arr) {
     arr[i] = formatComment(arr[i]);
   };
   return [
-    "//-----------------------------------------------------------------------",
+    '//-----------------------------------------------------------------------',
     arr.join('\n'),
-    "//-----------------------------------------------------------------------"
+    '//-----------------------------------------------------------------------'
   ].join('\n');
 }
 
@@ -221,6 +224,21 @@ function getFont(font) {
     'family': f.family,
     'weight': handleWeight(f.style.toLowerCase())
   };
+}
+
+function getFontStyle(fs) {
+  /**
+   * @todo figure out if theres a way to tell between real font italic and faux
+   */
+  switch (fs) {
+    case true :
+      //return 'oblique';
+      return 'italic';
+    break;
+    default :
+      return fase;
+    break;
+  }
 }
 
 function getLetterSpacing(num) {
@@ -242,16 +260,15 @@ function getTextCase(tc) {
   }
 }
 
-function getTextDecoration(td) {
-  switch (td) {
-    case UnderlineType.UNDERLINELEFT:
-    case UnderlineType.UNDERLINERIGHT:
-      return 'underline';
-    break;
-    default :
-      return false;
-    break;
+function getTextDecoration(decorationObj) {
+  td = [];
+  if (decorationObj['underline'] != UnderlineType.UNDERLINEOFF) {
+    td.push('underline');
   }
+  if (decorationObj['line-through'] != StrikeThruType.STRIKEOFF) {
+    td.push('line-through');
+  }
+  return td.join(' ');
 }
 
 function getTextTransform(tf) {
