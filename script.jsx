@@ -6,6 +6,7 @@
  *****************************************************************/
 var useDialog = true,
 openFile = true,
+globalItalic = false,
 base;
 
 function initTextExport() {
@@ -221,9 +222,13 @@ function getFont(font) {
   for (prop in f) {
     $.writeln(prop + ': ' + f[prop]);
   }
+  var style = f.style.split(' ');
+  if (style[1] != undefined) {
+    globalItalic = true;
+  }
   return {
     'family': f.family,
-    'weight': handleWeight(f.style.toLowerCase())
+    'weight': handleWeight(style[0].toLowerCase())
   };
 }
 
@@ -231,12 +236,16 @@ function getFontStyle(fs) {
   /**
    * @todo figure out if theres a way to tell between real font italic and faux
    */
+  $.writeln(globalItalic);
+  if (globalItalic) {
+    return 'italic';
+  }
   switch (fs) {
     case true :
       //faux italic = oblique
       //http://www.w3.org/TR/css3-fonts/#font-style-prop
       //return 'oblique';
-      return 'italic';
+      return 'oblique';
     break;
     default :
       return false;
