@@ -233,11 +233,13 @@ function getFontStyle(fs) {
    */
   switch (fs) {
     case true :
+      //faux italic = oblique
+      //http://www.w3.org/TR/css3-fonts/#font-style-prop
       //return 'oblique';
       return 'italic';
     break;
     default :
-      return fase;
+      return false;
     break;
   }
 }
