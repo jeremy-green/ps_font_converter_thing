@@ -13,21 +13,21 @@ base;
 function initTextExport() {
   // Linefeed shizzle
   if ($.os.search(/windows/i) != -1) {
-    fileLineFeed = "windows";
+    fileLineFeed = 'windows';
   } else {
-    fileLineFeed = "macintosh";
+    fileLineFeed = 'macintosh';
   }
 
   // Do we have a document open?
   if (app.documents.length === 0) {
-    alert("Please open at least one file", "TextExport Error", true);
+    alert('Please open at least one file', 'TextExport Error', true);
     return;
   }
 
   // Oh, we have more than one document open!
   if (app.documents.length > 1) {
 
-    var runMultiple = confirm("TextExport has detected Multiple Files.\nDo you wish to run TextExport on all opened files?", true, "TextExport");
+    var runMultiple = confirm('TextExport has detected Multiple Files.\nDo you wish to run TextExport on all opened files?', true, 'TextExport');
 
     if (runMultiple === true) {
       docs = app.documents;
@@ -52,11 +52,11 @@ function initTextExport() {
     if ( (runMultiple !== true) && (useDialog === true) ) {
 
       // Pop up save dialog
-      /*var saveFile = File.saveDialog("Please select a file to export the text to:");
+      /*var saveFile = File.saveDialog('Please select a file to export the text to:');
 
       // User Cancelled
       if(saveFile == null) {
-        alert("User Cancelled");
+        alert('User Cancelled');
         return;
       }*/
 
@@ -81,10 +81,10 @@ function initTextExport() {
     fileOut.linefeed = fileLineFeed;
 
     // open for write
-    fileOut.open("w", "TEXT", "????");
+    fileOut.open('w', 'TEXT', '????');
 
     // Append title of document to file
-    //fileOut.writeln(formatSeparator(["START TextExport for " + docs[i].name]));
+    //fileOut.writeln('//  START TextExport for ' + docs[i].name + '\n');
 
     // Set active document
     app.activeDocument = docs[i];
@@ -93,7 +93,7 @@ function initTextExport() {
     goTextExport2(app.activeDocument, fileOut, '/');
 
     //  Hammertime!
-    //fileOut.writeln(formatSeparator(["FINISHED TextExport for " + docs[i].name]));
+    //fileOut.writeln('\n//  FINISHED TextExport for ' + docs[i].name);
 
     // close the file
     fileOut.close();
@@ -103,13 +103,13 @@ function initTextExport() {
       if (openFile === true) {
               fileOut.execute();
       } else {
-        alert("File was saved to:\n" + Folder.decode(filePath), "TextExport");
+        alert('File was saved to:\n' + Folder.decode(filePath), 'TextExport');
       }
     }
   }
 
   if (runMultiple === true) {
-    alert("Parsed " + documents.length + " files;\nFiles were saved in your documents folder", "TextExport");
+    alert('Parsed ' + documents.length + ' files;\nFiles were saved in your documents folder', 'TextExport');
   }
 }
 
@@ -130,7 +130,7 @@ function goTextExport2(el, fileOut, path) {
     var currentLayer = layers[layerIndex-1];
 
     // currentLayer is a LayerSet
-    if (currentLayer.typename == "LayerSet") {
+    if (currentLayer.typename == 'LayerSet') {
 
       goTextExport2(currentLayer, fileOut, path + currentLayer.name + '/');
 
@@ -200,7 +200,7 @@ function goTextExport2(el, fileOut, path) {
       }
     }
   }
-  fileOut.writeln(formatSeparator(["Variables"]));
+  fileOut.writeln(formatSeparator(['Variables']));
   fileOut.writeln(varsArr.join('\n'));
   fileOut.writeln('\n');
   fileOut.writeln(definitionsArr.join('\n'));
