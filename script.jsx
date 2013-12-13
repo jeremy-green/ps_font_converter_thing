@@ -200,7 +200,6 @@ function goTextExport2(el, fileOut, path) {
       }
     }
   }
-  $.writeln(varsArr);
   fileOut.writeln(formatSeparator(["Variables"]));
   fileOut.writeln(varsArr.join('\n'));
   fileOut.writeln('\n');
@@ -293,6 +292,7 @@ function getLetterSpacing(num) {
 }
 
 function getLineHeight(px, lh) {
+  //arbitrary
   return (px/lh).toFixed(4);
 }
 
