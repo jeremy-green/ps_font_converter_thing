@@ -166,15 +166,15 @@ function goTextExport2(el, fileOut, path) {
               return false;
             }
           },
-          'font-size': function () { try { return formatUnit(handleRound(textItem.size)) } catch (e) { return false; } },
+          'font-size': function () { try { return formatUnit(handleRound(textItem.size)); } catch (e) { return false; } },
           'font-style': function () { try { if (font.italic) { return getFontStyle(font.italic); } return getFontStyle(textItem.fauxItalic); } catch (e) { return false; } },
-          'font-weight': function () { try { return font.weight } catch (e) { return false; } },
-          'font-variant': function () { try { return getTextCase(textItem.capitalization) } catch (e) { return false; } },
-          'letter-spacing': function () { try { return formatUnit(getLetterSpacing(textItem.tracking)) } catch (e) { return false; } },
-          'line-height': function () { try { return getLineHeight(handleRound(textItem.leading), handleRound(textItem.size)) } catch (e) { return false; } },
+          'font-weight': function () { try { return font.weight; } catch (e) { return false; } },
+          'font-variant': function () { try { return getTextCase(textItem.capitalization); } catch (e) { return false; } },
+          'letter-spacing': function () { try { return formatUnit(getLetterSpacing(textItem.tracking)); } catch (e) { return false; } },
+          'line-height': function () { try { return getLineHeight(handleRound(textItem.leading), handleRound(textItem.size)); } catch (e) { return false; } },
           'text-align': function() { try { return getTextAlign(textItem.justification); } catch (e) { return false; } },
-          'text-decoration': function () { try { return getTextDecoration({'underline': textItem.underline, 'line-through': textItem.strikeThru}) } catch (e) { return false; } },
-          'text-transform': function () { try { return getTextTransform(textItem.capitalization) } catch (e) { return false; } },
+          'text-decoration': function () { try { return getTextDecoration({'underline': textItem.underline, 'line-through': textItem.strikeThru}); } catch (e) { return false; } },
+          'text-transform': function () { try { return getTextTransform(textItem.capitalization); } catch (e) { return false; } },
           '@include enable-ligatures': function () {
             try {
               if (textItem.ligatures) {
