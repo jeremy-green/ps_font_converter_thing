@@ -142,14 +142,20 @@ function goTextExport2(el, fileOut, path) {
         var textItem = currentLayer.textItem;
         definitionsArr.push(formatSeparator([
           'Name: ' + currentLayer.name,
-          'Contents: ' + currentLayer.textItem.contents
+          'Contents: ' + currentLayer.textItem.contents.replace(/(\r\n|\n|\r)/gm, ' ')
         ]));
 
         /**
          * @todo turn the properties into an object and iterate over it
          */
-        var font = getFont(textItem.font);
-        var textObj = {
+        var font = function() {
+          try {
+            getFont(textItem.font);
+          } catch (e) {
+            return '';
+          }
+        },
+        textObj = {
           'color': function () {
             try {
               varsArr.push(formatVariableDefinition(names[textItem.color.nearestWebColor.hexValue], '#' + textItem.color.rgb.hexValue));
