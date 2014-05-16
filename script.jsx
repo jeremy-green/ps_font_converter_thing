@@ -1,4 +1,34 @@
-﻿/*****************************************************************
+﻿if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function (searchElement, fromIndex) {
+      if ( this === undefined || this === null ) {
+        throw new TypeError( '"this" is null or not defined' );
+      }
+
+      var length = this.length >>> 0; // Hack to convert object.length to a UInt32
+
+      fromIndex = +fromIndex || 0;
+
+      if (Math.abs(fromIndex) === Infinity) {
+        fromIndex = 0;
+      }
+
+      if (fromIndex < 0) {
+        fromIndex += length;
+        if (fromIndex < 0) {
+          fromIndex = 0;
+        }
+      }
+
+      for (;fromIndex < length; fromIndex++) {
+        if (this[fromIndex] === searchElement) {
+          return fromIndex;
+        }
+      }
+
+      return -1;
+    };
+  }
+/*****************************************************************
  *
  * TextExport 1.3 - by Bramus! - http://www.bram.us/
  * Licensed under the Creative Commons Attribution 2.5 License - http://creativecommons.org/licenses/by/2.5/
@@ -158,16 +188,24 @@ function goTextExport2(el, fileOut, path) {
         textObj = {
           'color': function () {
             try {
-              varsArr.push(formatVariableDefinition(names[textItem.color.nearestWebColor.hexValue], '#' + textItem.color.rgb.hexValue));
-              return formatVariable(names[textItem.color.nearestWebColor.hexValue]);
+              var format = formatVariableDefinition(names[textItem.color.nearestWebColor.hexValue], '#' + textItem.color.rgb.hexValue);
+              if (varsArr.indexOf(format) === -1) {
+                varsArr.push(format);
+                return formatVariable(names[textItem.color.nearestWebColor.hexValue]);
+              }
+              return false;
             } catch (e) {
               return false;
             }
           },
           'font-family': function () {
             try {
-              varsArr.push(formatVariableDefinition(font.family, '"' + font.family + '"'));
-              return formatVariable(font.family);
+              var format = formatVariableDefinition(font.family, '"' + font.family + '"');
+              if (varsArr.indexOf(format) === -1) {
+                varsArr.push(format);
+                return formatVariable(font.family);
+              }
+              return false;
             } catch (e) {
               return false;
             }
