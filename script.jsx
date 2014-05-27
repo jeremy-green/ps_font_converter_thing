@@ -1,33 +1,34 @@
 ﻿if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function (searchElement, fromIndex) {
-      if ( this === undefined || this === null ) {
-        throw new TypeError( '"this" is null or not defined' );
-      }
+  Array.prototype.indexOf = function (searchElement, fromIndex) {
+    if ( this === undefined || this === null ) {
+      throw new TypeError( '"this" is null or not defined' );
+    }
 
-      var length = this.length >>> 0; // Hack to convert object.length to a UInt32
+    var length = this.length >>> 0; // Hack to convert object.length to a UInt32
 
-      fromIndex = +fromIndex || 0;
+    fromIndex = +fromIndex || 0;
 
-      if (Math.abs(fromIndex) === Infinity) {
+    if (Math.abs(fromIndex) === Infinity) {
+      fromIndex = 0;
+    }
+
+    if (fromIndex < 0) {
+      fromIndex += length;
+      if (fromIndex < 0) {
         fromIndex = 0;
       }
+    }
 
-      if (fromIndex < 0) {
-        fromIndex += length;
-        if (fromIndex < 0) {
-          fromIndex = 0;
-        }
+    for (;fromIndex < length; fromIndex++) {
+      if (this[fromIndex] === searchElement) {
+        return fromIndex;
       }
+    }
 
-      for (;fromIndex < length; fromIndex++) {
-        if (this[fromIndex] === searchElement) {
-          return fromIndex;
-        }
-      }
+    return -1;
+  };
+}
 
-      return -1;
-    };
-  }
 /*****************************************************************
  *
  * TextExport 1.3 - by Bramus! - http://www.bram.us/
@@ -91,13 +92,13 @@ function initTextExport() {
       }*/
 
       // set filePath and fileName to the one chosen in the dialog
-      filePath = Folder.myDocuments + '/' + docs[i].name + '.scss';
+      filePath = Folder.myDocuments + '/' + getMachineName(docs[i].name) + '.scss';
 
 
     } else {
 
       // Auto set filePath and fileName
-      filePath = Folder.myDocuments + '/' + docs[i].name + '.scss';
+      filePath = Folder.myDocuments + '/' + getMachineName(docs[i].name) + '.scss';
 
     }
 
@@ -131,7 +132,7 @@ function initTextExport() {
     // Give notice that we're done or open the file (only when running 1 file!)
     if (runMultiple === false) {
       if (openFile === true) {
-              fileOut.execute();
+        fileOut.execute();
       } else {
         alert('File was saved to:\n' + Folder.decode(filePath), 'TextExport');
       }
@@ -244,8 +245,10 @@ function goTextExport2(el, fileOut, path) {
       }
     }
   }
-  fileOut.writeln(formatSeparator(['Variables']));
-  fileOut.writeln(varsArr.sort().join('\n'));
+  if (varsArr.length > 0) {
+    fileOut.writeln(formatSeparator(['Variables']));
+    fileOut.writeln(varsArr.sort().join('\n'));
+  }
   fileOut.writeln('\n');
   fileOut.writeln(definitionsArr.join('\n'));
 
